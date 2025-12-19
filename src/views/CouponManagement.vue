@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { apiCreateCoupon, apiDeleteCoupon, apiEditCoupon, apiGetCoupons } from '@/api/coupons'
+import CouponModal from '@/components/CouponModal.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
 import type { CouponData, Pagination } from '@/types/coupon'
 import { formatDate } from '@/utils/date'
 import { onMounted, ref, useTemplateRef } from 'vue'
 
-const initialFormData: unknown = {
+const initialFormData: CouponData = {
     id: '',
     title: '',
     is_enabled: 0,
@@ -14,13 +15,13 @@ const initialFormData: unknown = {
     code: '',
 }
 
-const form = ref(initialFormData)
+const form = ref<CouponData>(initialFormData)
 
-const currentPage = ref('1')
+const currentPage = ref<string>('1')
 
-const coupons = ref([])
+const coupons = ref<CouponData[]>([])
 
-const pagination = ref({
+const pagination = ref<Pagination>({
     total_pages: 0,
     current_page: 0,
     has_pre: false,
@@ -44,19 +45,19 @@ onMounted(() => {
     getCoupons()
 })
 
-// const couponModalRef = useTemplateRef('couponModalRef')
-const deleteModalRef = useTemplateRef('deleteModalRef')
+const couponModalRef = useTemplateRef<InstanceType<typeof CouponModal>>('couponModalRef')
+const deleteModalRef = useTemplateRef<InstanceType<typeof DeleteModal>>('deleteModalRef')
 
-const isLoading = ref(false)
+const isLoading = ref<boolean>(false)
 
-const openModal = (coupon?: unknown) => {
+const openModal = (coupon?: CouponData) => {
     if (coupon) {
         form.value = { ...coupon }
     } else {
         form.value = initialFormData
     }
 
-    couponModalRef.value?.openModal(async (couponData: unknown) => {
+    couponModalRef.value?.openModal(async (couponData: CouponData) => {
         isLoading.value = true
 
         try {
@@ -83,11 +84,11 @@ const openModal = (coupon?: unknown) => {
     })
 }
 
-const openDeleteModal = (couponId: unknown) => {
+const openDeleteModal = (couponId: string) => {
     deleteModalRef.value?.openModal(() => deleteCoupon(couponId))
 }
 
-const deleteCoupon = async (couponId: unknown) => {
+const deleteCoupon = async (couponId: string) => {
     try {
         await apiDeleteCoupon(couponId)
     } catch (error) {
@@ -174,7 +175,7 @@ const deleteCoupon = async (couponId: unknown) => {
         </div>
     </div>
 
-    <!-- <CouponModal ref="couponModalRef" :coupon="form" :is-loading="isLoading" /> -->
+    <CouponModal ref="couponModalRef" :coupon="form" :is-loading="isLoading" />
     <DeleteModal ref="deleteModalRef" title="刪除訂單" content="確定要刪除該優惠券嗎？" />
 </template>
 

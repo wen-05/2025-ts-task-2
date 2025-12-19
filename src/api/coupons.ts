@@ -41,7 +41,9 @@ couponApi.interceptors.response.use(
 )
 
 // 取得優惠券列表
-export const apiGetCoupons = (params: unknown) => {
+export const apiGetCoupons = (params: {
+    page?: string
+}): Promise<AxiosResponse<GetCouponsResponse>> => {
     return couponApi.get(`/v2/api/${API_PATH}/admin/coupons`, {
         params,
     })
@@ -49,8 +51,8 @@ export const apiGetCoupons = (params: unknown) => {
 
 // 建立優惠券
 export const apiCreateCoupon = (
-    params: unknown,
-) => {
+    params: CreateCouponParams,
+): Promise<AxiosResponse<CreateCouponResponse>> => {
     return couponApi.post(`/v2/api/${API_PATH}/admin/coupon`, {
         data: params,
     })
@@ -58,15 +60,15 @@ export const apiCreateCoupon = (
 
 // 編輯優惠券
 export const apiEditCoupon = (
-    params: unknown,
-) => {
-
+    params: EditCouponParams,
+): Promise<AxiosResponse<EditCouponResponse>> => {
+    const { id, data } = params
     return couponApi.put(`/v2/api/${API_PATH}/admin/coupon/${id}`, {
         data,
     })
 }
 
 // 刪除優惠券
-export const apiDeleteCoupon = (couponId) => {
+export const apiDeleteCoupon = (couponId: string) => {
     return couponApi.delete(`/v2/api/${API_PATH}/admin/coupon/${couponId}`)
 }

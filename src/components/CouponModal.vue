@@ -6,14 +6,14 @@ import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
 
 // 定義 Props 介面
 interface CouponModalProps {
-    coupon: unknown
+    coupon: CouponData
     isLoading: boolean
 }
 
 // 定義 props
-const { coupon } = defineProps<unknown>()
+const { coupon } = defineProps<CouponModalProps>()
 
-const initialFormData: unknown = {
+const initialFormData: CouponData = {
     id: '',
     title: '',
     is_enabled: 0,
@@ -22,7 +22,7 @@ const initialFormData: unknown = {
     code: '',
 }
 
-const tempCoupon = ref<unknown>(initialFormData)
+const tempCoupon = ref<CouponData>(initialFormData)
 
 watch(
     () => coupon,
@@ -32,10 +32,10 @@ watch(
 )
 
 // HTMLElement
-const modalRef = useTemplateRef('modalRef')
-let modal: null = null
+const modalRef = useTemplateRef<HTMLElement>('modalRef')
+let modal: Modal | null = null
 
-let onSaveCoupon: ((couponData: unknown) => Promise<void>) | null = null
+let onSaveCoupon: ((couponData: CouponData) => Promise<void>) | null = null
 
 onMounted(() => {
     if (modalRef.value) {
@@ -49,7 +49,7 @@ onUnmounted(() => {
     }
 })
 
-const openModal = (onSave: (couponData: unknown) => Promise<void>) => {
+const openModal = (onSave: (couponData: CouponData) => Promise<void>) => {
     if (modal) {
         modal.show()
         onSaveCoupon = async (couponData) => {
